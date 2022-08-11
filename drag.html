@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/test.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+</head>
+
+<body>
+
+    <div class="container">
+        <div id="1" class="drag-drop color1">Data</div>
+        <div id="2" class="drag-drop color2"></div>
+    </div>
+
+
+
+
+    <script>
+
+        var drag_pos = { x: 0, y: 0 }
+
+        interact('.drag-drop').dropzone({
+            ondropactivate: function (event) {
+                event.target.classList.add('drop-active')
+                console.log(event.target);
+            },
+            ondragenter: function (event) {
+                var dropId = event.target.id
+                $(`#${dropId}`).addClass('drop');
+            },
+            ondragleave: function (event) {
+                var dropId = event.target.id
+                $(`#${dropId}`).removeClass('drop');
+            },
+            ondrop: function (event) {
+                var dropId = event.target.id;
+                var dragId = event.relatedTarget.id;
+                var html = $(`#${dragId}`).html();
+                if (!html) {
+                    alert("Parkiran kosong");
+                } else {
+                    $(`#${dropId}`).html(html);
+                    $(`#${dragId}`).html('');
+                }
+
+                var dropId = event.target.id
+                $(`#${dropId}`).removeClass('drop');
+                console.log(dropId, dragId);
+            },
+            ondropdeactivate: function (event) {
+            }
+        })
+
+
+        //---- Dragging function
+        interact('.drag-drop')
+            .draggable({
+                inertia: true,
+                modifiers: [
+                    interact.modifiers.restrictRect({
+                        restriction: 'parent',
+                        endOnly: true
+                    })
+                ],
+                autoScroll: true,
+                listeners: {
+                    move: dragging,
+                    end: dragged
+                }
+            });
+
+        function dragging(e) {
+            drag_pos.x += e.dx;
+            drag_pos.y += e.dy;
+            e.target.style.transform = 'translate(' + drag_pos.x + 'px, ' + drag_pos.y + 'px)';
+        }
+
+
+        function dragged(e) {
+            drag_pos.x = 0;
+            drag_pos.y = 0;
+            e.target.style.transform = 'translate(0px, 0px)';
+        }
+    </script>
+</body>
+
+</html>
